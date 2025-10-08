@@ -134,11 +134,12 @@ export default function RegisterInstall() {
           body: phasingFormData,
         })
         const uploadData = await uploadRes.json()
-        console.log('Phasing upload response:', uploadData)
+        console.log('Phasing upload response:', JSON.stringify(uploadData, null, 2))
         if (uploadData.success) {
           phasingFilePaths = uploadData.files
         } else {
-          console.error('Phasing file upload failed:', uploadData)
+          console.error('Phasing file upload failed:', JSON.stringify(uploadData, null, 2))
+          alert(`Phasing file upload failed: ${uploadData.message || 'Unknown error'}\n${uploadData.error || ''}`)
         }
       }
 
@@ -155,11 +156,12 @@ export default function RegisterInstall() {
           body: timingFormData,
         })
         const uploadData = await uploadRes.json()
-        console.log('Timing upload response:', uploadData)
+        console.log('Timing upload response:', JSON.stringify(uploadData, null, 2))
         if (uploadData.success) {
           timingFilePaths = uploadData.files
         } else {
-          console.error('Timing file upload failed:', uploadData)
+          console.error('Timing file upload failed:', JSON.stringify(uploadData, null, 2))
+          alert(`Timing file upload failed: ${uploadData.message || 'Unknown error'}\n${uploadData.error || ''}`)
         }
       }
 
