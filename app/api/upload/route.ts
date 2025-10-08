@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Type for file-like objects from FormData in Node.js
+interface FileBlob extends Blob {
+  name: string
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('Upload API called')
@@ -15,15 +20,21 @@ export async function POST(request: NextRequest) {
     // This stores files in the database instead of filesystem
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log(`Processing file ${i + 1}:`, file)
+      console.log(`Processing file ${i + 1}:`, typeof file, file)
       
+      // In Node.js/Next.js API routes, files are Blob objects with a name property
       if (file && typeof file === 'object' && 'arrayBuffer' in file) {
         try {
-          console.log(`File ${i + 1} name:`, (file as File).name)
-          console.log(`File ${i + 1} type:`, (file as File).type)
-          console.log(`File ${i + 1} size:`, (file as File).size)
+          const fileBlob = file as FileBlob
+          const fileName = fileBlob.name || `file-${i + 1}`
+          const fileType = fileBlob.type || 'application/octet-stream'
+          const fileSize = fileBlob.size || 0
           
-          const bytes = await (file as File).arrayBuffer()
+          console.log(`File ${i + 1} name:`, fileName)
+          console.log(`File ${i + 1} type:`, fileType)
+          console.log(`File ${i + 1} size:`, fileSize)
+          
+          const bytes = await fileBlob.arrayBuffer()
           console.log(`File ${i + 1} bytes length:`, bytes.byteLength)
           
           const buffer = Buffer.from(bytes)
@@ -33,8 +44,6 @@ export async function POST(request: NextRequest) {
           console.log(`File ${i + 1} base64 length:`, base64.length)
           
           // Create data URL with filename metadata
-          const fileName = (file as File).name
-          const fileType = (file as File).type || 'application/octet-stream'
           const dataUrl = `data:${fileType};name=${encodeURIComponent(fileName)};base64,${base64}`
           uploadedFiles.push(dataUrl)
           console.log(`File ${i + 1} converted successfully`)
@@ -43,7 +52,7 @@ export async function POST(request: NextRequest) {
           throw fileError
         }
       } else {
-        console.warn(`File ${i + 1} is not a valid File object`)
+        console.warn(`File ${i + 1} is not a valid Blob object`)
       }
     }
 
