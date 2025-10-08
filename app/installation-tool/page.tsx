@@ -47,12 +47,12 @@ export default function InstallationTool() {
       question: 'Select all cabinet types that apply',
       type: 'multi-select',
       options: [
-        { value: 'type-170', label: 'Type 170' },
-        { value: 'type-332', label: 'Type 332' },
-        { value: 'type-2070', label: 'Type 2070' },
-        { value: 'nema-ts1', label: 'NEMA TS-1' },
-        { value: 'nema-ts2', label: 'NEMA TS-2' },
-        { value: 'other', label: 'Other' }
+        { value: 'type-170', label: 'Type 170', description: '' },
+        { value: 'type-332', label: 'Type 332', description: '' },
+        { value: 'type-2070', label: 'Type 2070', description: '' },
+        { value: 'nema-ts1', label: 'NEMA TS-1', description: '' },
+        { value: 'nema-ts2', label: 'NEMA TS-2', description: '' },
+        { value: 'other', label: 'Other', description: '' }
       ]
     },
     {
