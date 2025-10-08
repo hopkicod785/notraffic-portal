@@ -340,8 +340,9 @@ export default function InstallationTool() {
                       />
                       <button
                         onClick={() => {
-                          if (answers[currentStepData.id]) {
-                            handleAnswer(answers[currentStepData.id])
+                          const value = answers[currentStepData.id]
+                          if (value && (typeof value === 'string' || typeof value === 'number')) {
+                            handleAnswer(value)
                           }
                         }}
                         disabled={!answers[currentStepData.id]}
