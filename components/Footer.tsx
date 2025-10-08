@@ -28,14 +28,14 @@ export default function Footer() {
           </p>
           
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
-            <div className="flex items-center gap-2">
+            <a href="mailto:support@notraffic.tech" className="flex items-center gap-2 hover:text-primary-300 transition-colors">
               <FiMail className="w-4 h-4" />
               <span>support@notraffic.tech</span>
-            </div>
-            <div className="flex items-center gap-2">
+            </a>
+            <a href="tel:+12028001890" className="flex items-center gap-2 hover:text-primary-300 transition-colors">
               <FiPhone className="w-4 h-4" />
               <span>1-202-800-1890</span>
-            </div>
+            </a>
             <div className="flex items-center gap-2">
               <FiMapPin className="w-4 h-4" />
               <span>Global Operations</span>
