@@ -559,11 +559,19 @@ export default function AdminDashboard() {
                   </div>
                   <div className="bg-dark-900 p-4 rounded-lg">
                     <p className="text-xs text-gray-500 mb-1">Email</p>
-                    <p className="text-lg font-semibold">{selectedItem.email}</p>
+                    <p className="text-lg font-semibold">
+                      <a href={`mailto:${selectedItem.email}`} className="text-primary-300 hover:text-primary-400 transition-colors">
+                        {selectedItem.email}
+                      </a>
+                    </p>
                   </div>
                   <div className="bg-dark-900 p-4 rounded-lg">
                     <p className="text-xs text-gray-500 mb-1">Phone</p>
-                    <p className="text-lg font-semibold">{selectedItem.phone}</p>
+                    <p className="text-lg font-semibold">
+                      <a href={`tel:${selectedItem.phone}`} className="text-primary-300 hover:text-primary-400 transition-colors">
+                        {selectedItem.phone}
+                      </a>
+                    </p>
                   </div>
                   <div className="bg-dark-900 p-4 rounded-lg">
                     <p className="text-xs text-gray-500 mb-1">Estimated Install Date</p>
@@ -579,55 +587,77 @@ export default function AdminDashboard() {
                 <div className="bg-dark-900 p-4 rounded-lg">
                   <p className="text-xs text-gray-500 mb-2">Cabinet Types</p>
                   <div className="flex flex-wrap gap-2">
-                    {selectedItem.cabinetType.map((type: string, idx: number) => (
-                      <span key={idx} className="px-3 py-1 bg-primary-500/20 text-primary-300 rounded-full text-sm">
-                        {type}
-                      </span>
-                    ))}
+                    {selectedItem.cabinetType && selectedItem.cabinetType.length > 0 ? (
+                      selectedItem.cabinetType.map((type: string, idx: number) => (
+                        <span key={idx} className="px-3 py-1 bg-primary-500/20 text-primary-300 rounded-full text-sm">
+                          {type}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="text-gray-400 text-sm">No cabinet types selected</p>
+                    )}
                   </div>
                 </div>
 
-                {selectedItem.signalPhasingFiles && selectedItem.signalPhasingFiles.length > 0 && (
-                  <div className="bg-dark-900 p-4 rounded-lg">
-                    <p className="text-xs text-gray-500 mb-2">Signal Phasing Files</p>
-                    <div className="space-y-2">
-                      {selectedItem.signalPhasingFiles.map((file: string, idx: number) => (
-                        <a
-                          key={idx}
-                          href={file}
-                          download
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-primary-300 hover:text-primary-400 transition-colors"
-                        >
-                          <FiDownload className="w-4 h-4" />
-                          {file.split('/').pop()} {/* Show just filename */}
-                        </a>
-                      ))}
+                <div className="bg-dark-900 p-4 rounded-lg border-2 border-primary-500/30">
+                  <p className="text-sm font-semibold text-primary-300 mb-3">Uploaded Files</p>
+                  
+                  <div className="space-y-4">
+                    {/* Signal Phasing Files */}
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">Signal Phasing Files ({selectedItem.signalPhasingFiles?.length || 0})</p>
+                      {selectedItem.signalPhasingFiles && selectedItem.signalPhasingFiles.length > 0 ? (
+                        <div className="space-y-2">
+                          {selectedItem.signalPhasingFiles.map((file: string, idx: number) => (
+                            <a
+                              key={idx}
+                              href={file}
+                              download
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-3 p-3 bg-dark-800 hover:bg-dark-700 rounded-lg transition-colors group"
+                            >
+                              <FiDownload className="w-5 h-5 text-primary-300 group-hover:text-primary-400" />
+                              <span className="text-sm text-gray-300 group-hover:text-white flex-1">
+                                {file.split('/').pop()?.replace(/^\d+_/, '')} {/* Remove timestamp prefix */}
+                              </span>
+                              <span className="text-xs text-gray-500">Download</span>
+                            </a>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500 italic">No files uploaded</p>
+                      )}
                     </div>
-                  </div>
-                )}
 
-                {selectedItem.signalTimingFiles && selectedItem.signalTimingFiles.length > 0 && (
-                  <div className="bg-dark-900 p-4 rounded-lg">
-                    <p className="text-xs text-gray-500 mb-2">Signal Timing Files</p>
-                    <div className="space-y-2">
-                      {selectedItem.signalTimingFiles.map((file: string, idx: number) => (
-                        <a
-                          key={idx}
-                          href={file}
-                          download
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-primary-300 hover:text-primary-400 transition-colors"
-                        >
-                          <FiDownload className="w-4 h-4" />
-                          {file.split('/').pop()} {/* Show just filename */}
-                        </a>
-                      ))}
+                    {/* Signal Timing Files */}
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">Signal Timing Files ({selectedItem.signalTimingFiles?.length || 0})</p>
+                      {selectedItem.signalTimingFiles && selectedItem.signalTimingFiles.length > 0 ? (
+                        <div className="space-y-2">
+                          {selectedItem.signalTimingFiles.map((file: string, idx: number) => (
+                            <a
+                              key={idx}
+                              href={file}
+                              download
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-3 p-3 bg-dark-800 hover:bg-dark-700 rounded-lg transition-colors group"
+                            >
+                              <FiDownload className="w-5 h-5 text-primary-300 group-hover:text-primary-400" />
+                              <span className="text-sm text-gray-300 group-hover:text-white flex-1">
+                                {file.split('/').pop()?.replace(/^\d+_/, '')} {/* Remove timestamp prefix */}
+                              </span>
+                              <span className="text-xs text-gray-500">Download</span>
+                            </a>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500 italic">No files uploaded</p>
+                      )}
                     </div>
                   </div>
-                )}
+                </div>
 
                 <div className="bg-dark-900 p-4 rounded-lg">
                   <p className="text-xs text-gray-500 mb-1">Submission Date</p>
