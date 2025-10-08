@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { FiPackage, FiTool, FiFileText, FiRefreshCw, FiDownload, FiEye, FiSettings } from 'react-icons/fi'
+import { FiPackage, FiTool, FiFileText, FiRefreshCw, FiDownload, FiEye, FiSettings, FiX } from 'react-icons/fi'
 
 interface ProductInquiry {
   id: string
@@ -62,6 +62,7 @@ export default function AdminDashboard() {
   const [registrations, setRegistrations] = useState<InstallationRegistration[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedItem, setSelectedItem] = useState<any>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const loadData = async () => {
     setLoading(true)
@@ -91,8 +92,37 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     loadData()
+    setSearchQuery('') // Clear search when switching tabs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
+
+  // Filter data based on search query
+  const filteredInquiries = inquiries.filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.product.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (item.company && item.company.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+
+  const filteredServiceInquiries = serviceInquiries.filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (item.company && item.company.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+
+  const filteredAssessments = assessments.filter(item =>
+    item.deploymentType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.timeline.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const filteredRegistrations = registrations.filter(item =>
+    item.agency.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.distributor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.email.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const exportToCSV = () => {
     let csvContent = ''
@@ -161,6 +191,17 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Search Bar */}
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder={`Search ${activeTab}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
+            />
+          </div>
+
           {/* Tabs */}
           <div className="flex gap-2 mb-8 overflow-x-auto">
             <button
@@ -224,8 +265,8 @@ export default function AdminDashboard() {
               <>
                 {/* Product Inquiries */}
                 {activeTab === 'inquiries' && (
-                  inquiries.length > 0 ? (
-                    inquiries.map((inquiry) => (
+                  filteredInquiries.length > 0 ? (
+                    filteredInquiries.map((inquiry) => (
                       <motion.div
                         key={inquiry.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -286,8 +327,8 @@ export default function AdminDashboard() {
 
                 {/* Service Inquiries */}
                 {activeTab === 'services' && (
-                  serviceInquiries.length > 0 ? (
-                    serviceInquiries.map((inquiry) => (
+                  filteredServiceInquiries.length > 0 ? (
+                    filteredServiceInquiries.map((inquiry) => (
                       <motion.div
                         key={inquiry.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -348,8 +389,8 @@ export default function AdminDashboard() {
 
                 {/* Installation Assessments */}
                 {activeTab === 'assessments' && (
-                  assessments.length > 0 ? (
-                    assessments.map((assessment) => (
+                  filteredAssessments.length > 0 ? (
+                    filteredAssessments.map((assessment) => (
                       <motion.div
                         key={assessment.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -394,20 +435,20 @@ export default function AdminDashboard() {
 
                 {/* Installation Registrations */}
                 {activeTab === 'registrations' && (
-                  registrations.length > 0 ? (
-                    registrations.map((registration) => (
+                  filteredRegistrations.length > 0 ? (
+                    filteredRegistrations.map((registration) => (
                       <motion.div
                         key={registration.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="glass rounded-xl p-6 border border-dark-700 hover:border-primary-500/50 transition-all"
+                        className="glass rounded-xl p-4 border border-dark-700 hover:border-primary-500/50 transition-all"
                       >
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="text-xl font-bold mb-1">{registration.agency}</h3>
-                            <p className="text-sm text-gray-400">{registration.firstName} {registration.lastName}</p>
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold">{registration.agency}</h3>
+                            <p className="text-xs text-gray-400">{registration.firstName} {registration.lastName} • {registration.email}</p>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${
                             registration.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
                             registration.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
                             'bg-green-500/20 text-green-400'
@@ -415,31 +456,23 @@ export default function AdminDashboard() {
                             {registration.status}
                           </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                        <div className="grid grid-cols-3 gap-2 mb-2 text-xs">
+                          <div>
+                            <span className="text-gray-500">Install:</span>
+                            <span className="ml-1 text-primary-300">{new Date(registration.estimatedDate).toLocaleDateString()}</span>
+                          </div>
                           <div>
                             <span className="text-gray-500">Distributor:</span>
-                            <span className="ml-2 text-gray-300">{registration.distributor}</span>
+                            <span className="ml-1 text-gray-300">{registration.distributor}</span>
                           </div>
                           <div>
-                            <span className="text-gray-500">Email:</span>
-                            <span className="ml-2 text-gray-300">{registration.email}</span>
+                            <span className="text-gray-500">Submitted:</span>
+                            <span className="ml-1 text-gray-300">{new Date(registration.createdAt).toLocaleDateString()}</span>
                           </div>
-                          <div>
-                            <span className="text-gray-500">Phone:</span>
-                            <span className="ml-2 text-gray-300">{registration.phone}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Install Date:</span>
-                            <span className="ml-2 text-primary-300">{new Date(registration.estimatedDate).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                        <div className="pt-4 border-t border-dark-700">
-                          <p className="text-sm text-gray-400 mb-2">Intersections:</p>
-                          <p className="text-gray-300 text-sm">{registration.intersections}</p>
                         </div>
                         <button
                           onClick={() => setSelectedItem(registration)}
-                          className="mt-4 flex items-center gap-2 px-4 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all"
+                          className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-xs transition-all"
                         >
                           <FiEye className="w-4 h-4" />
                           View Full Details
@@ -466,20 +499,104 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="glass rounded-xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-dark-700"
+            className="glass rounded-xl p-8 max-w-3xl w-full max-h-[85vh] overflow-y-auto border border-dark-700"
           >
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl font-bold">Full Details</h2>
+              <h2 className="text-2xl font-bold">
+                {selectedItem.agency ? 'Installation Registration Details' : 
+                 selectedItem.deploymentType ? 'Assessment Details' :
+                 selectedItem.product ? 'Product Inquiry Details' :
+                 'Service Inquiry Details'}
+              </h2>
               <button
                 onClick={() => setSelectedItem(null)}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                <FiEye className="w-6 h-6" />
+                <FiX className="w-6 h-6" />
               </button>
             </div>
-            <pre className="text-sm text-gray-300 whitespace-pre-wrap bg-dark-900 p-4 rounded-lg overflow-x-auto">
-              {JSON.stringify(selectedItem, null, 2)}
-            </pre>
+
+            {/* Installation Registration Details */}
+            {selectedItem.agency && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">Agency</p>
+                    <p className="text-lg font-semibold">{selectedItem.agency}</p>
+                  </div>
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">Distributor</p>
+                    <p className="text-lg font-semibold">{selectedItem.distributor}</p>
+                  </div>
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">Contact Person</p>
+                    <p className="text-lg font-semibold">{selectedItem.firstName} {selectedItem.lastName}</p>
+                  </div>
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">Email</p>
+                    <p className="text-lg font-semibold">{selectedItem.email}</p>
+                  </div>
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">Phone</p>
+                    <p className="text-lg font-semibold">{selectedItem.phone}</p>
+                  </div>
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-1">Estimated Install Date</p>
+                    <p className="text-lg font-semibold text-primary-300">{new Date(selectedItem.estimatedDate).toLocaleDateString()}</p>
+                  </div>
+                </div>
+
+                <div className="bg-dark-900 p-4 rounded-lg">
+                  <p className="text-xs text-gray-500 mb-2">Intersection(s)</p>
+                  <p className="text-gray-300 whitespace-pre-wrap">{selectedItem.intersections}</p>
+                </div>
+
+                <div className="bg-dark-900 p-4 rounded-lg">
+                  <p className="text-xs text-gray-500 mb-2">Cabinet Types</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedItem.cabinetType.map((type: string, idx: number) => (
+                      <span key={idx} className="px-3 py-1 bg-primary-500/20 text-primary-300 rounded-full text-sm">
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedItem.signalPhasingFiles && selectedItem.signalPhasingFiles.length > 0 && (
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-2">Signal Phasing Files</p>
+                    <div className="space-y-1">
+                      {selectedItem.signalPhasingFiles.map((file: string, idx: number) => (
+                        <p key={idx} className="text-sm text-gray-300">📄 {file}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedItem.signalTimingFiles && selectedItem.signalTimingFiles.length > 0 && (
+                  <div className="bg-dark-900 p-4 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-2">Signal Timing Files</p>
+                    <div className="space-y-1">
+                      {selectedItem.signalTimingFiles.map((file: string, idx: number) => (
+                        <p key={idx} className="text-sm text-gray-300">📄 {file}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-dark-900 p-4 rounded-lg">
+                  <p className="text-xs text-gray-500 mb-1">Submission Date</p>
+                  <p className="text-sm text-gray-300">{new Date(selectedItem.createdAt).toLocaleString()}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Fallback for other types */}
+            {!selectedItem.agency && (
+              <pre className="text-sm text-gray-300 whitespace-pre-wrap bg-dark-900 p-4 rounded-lg overflow-x-auto">
+                {JSON.stringify(selectedItem, null, 2)}
+              </pre>
+            )}
           </motion.div>
         </div>
       )}
