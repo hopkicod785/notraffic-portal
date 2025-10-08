@@ -68,19 +68,6 @@ export default function AdminDashboard() {
   const [selectedItem, setSelectedItem] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-950">
-        <FiRefreshCw className="w-12 h-12 text-primary-300 animate-spin" />
-      </div>
-    )
-  }
-
-  if (status === 'unauthenticated') {
-    router.push('/admin/login')
-    return null
-  }
-
   const loadData = async () => {
     setLoading(true)
     try {
@@ -177,6 +164,20 @@ export default function AdminDashboard() {
     a.href = url
     a.download = filename
     a.click()
+  }
+
+  // Handle authentication states
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-950">
+        <FiRefreshCw className="w-12 h-12 text-primary-300 animate-spin" />
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/admin/login')
+    return null
   }
 
   return (
