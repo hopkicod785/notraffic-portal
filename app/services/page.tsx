@@ -1,9 +1,36 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { FiCheck, FiSettings, FiUsers, FiTrendingUp, FiShield, FiZap, FiHeadphones } from 'react-icons/fi'
+import { useState } from 'react'
+import Link from 'next/link'
+import { FiCheck, FiSettings, FiUsers, FiTrendingUp, FiShield, FiZap, FiHeadphones, FiArrowRight } from 'react-icons/fi'
 
 export default function Services() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    phone: '',
+    service: '',
+    message: ''
+  })
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // For now, just show success. You could send to a different API endpoint
+    setSubmitted(true)
+    console.log('Service inquiry submitted:', formData)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
   const services = [
     {
       icon: <FiSettings className="w-10 h-10" />,
@@ -179,28 +206,36 @@ export default function Services() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="glass rounded-xl p-8 hover:border-primary-500/50 transition-all duration-300 border border-dark-700"
               >
-                <div className={`w-16 h-16 rounded-lg bg-gradient-to-br ${service.color} flex items-center justify-center mb-6`}>
-                  {service.icon}
-                </div>
-                
-                <h3 className="text-2xl font-bold mb-3">
-                  {service.title}
-                </h3>
-                
-                <p className="text-gray-400 mb-6">
-                  {service.description}
-                </p>
+                <Link href="/services#inquiry">
+                  <div className="group h-full glass rounded-xl p-8 hover:border-primary-500 transition-all duration-300 border border-dark-700 cursor-pointer hover:shadow-lg hover:shadow-primary-500/20">
+                    <div className={`w-16 h-16 rounded-lg bg-gradient-to-br ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                      {service.icon}
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary-300 transition-colors">
+                      {service.title}
+                    </h3>
+                    
+                    <p className="text-gray-400 mb-6">
+                      {service.description}
+                    </p>
 
-                <ul className="space-y-2">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <FiCheck className="w-5 h-5 text-primary-300 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300 text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                    <ul className="space-y-2 mb-6">
+                      {service.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <FiCheck className="w-5 h-5 text-primary-300 flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-300 text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="flex items-center text-primary-300 font-semibold">
+                      Inquire Now
+                      <FiArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
+                    </div>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -277,27 +312,167 @@ export default function Services() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-black">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Service Inquiry Form Section */}
+      <section id="inquiry" className="py-20 bg-gradient-to-b from-black to-dark-950">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-              Ready to Get Started?
-            </h2>
-            <p className="text-xl text-gray-400 mb-8">
-              Contact us to discuss which services are right for your organization
-            </p>
-            <a 
-              href="/products#inquiry"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-primary-500 hover:bg-primary-600 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg shadow-primary-500/50 hover:shadow-primary-500/70"
-            >
-              Contact Our Team
-            </a>
+            <div className="text-center mb-12">
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+                Request Service Information
+              </h2>
+              <p className="text-xl text-gray-400">
+                Get in touch with our team to learn more about our services
+              </p>
+            </div>
+
+            {!submitted ? (
+              <form onSubmit={handleSubmit} className="glass rounded-xl p-8 border border-dark-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium mb-2">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
+                      placeholder="John Doe"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium mb-2">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
+                      placeholder="john@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium mb-2">
+                      Company
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
+                      placeholder="Your Company"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="service" className="block text-sm font-medium mb-2">
+                    Service of Interest *
+                  </label>
+                  <select
+                    id="service"
+                    name="service"
+                    required
+                    value={formData.service}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
+                  >
+                    <option value="">Select a service</option>
+                    {services.map((service) => (
+                      <option key={service.title} value={service.title}>
+                        {service.title}
+                      </option>
+                    ))}
+                    <option value="general">General Inquiry</option>
+                  </select>
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="message" className="block text-sm font-medium mb-2">
+                    Message *
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows={6}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors resize-none"
+                    placeholder="Tell us about your service needs..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full px-8 py-4 bg-primary-500 hover:bg-primary-600 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/50 hover:shadow-primary-500/70"
+                >
+                  Submit Inquiry
+                  <FiArrowRight />
+                </button>
+              </form>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="glass rounded-xl p-12 border border-dark-700 text-center"
+              >
+                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FiCheck className="w-10 h-10 text-green-500" />
+                </div>
+                <h3 className="text-3xl font-bold mb-4">Thank You!</h3>
+                <p className="text-xl text-gray-400 mb-8">
+                  We've received your inquiry and will get back to you shortly.
+                </p>
+                <button
+                  onClick={() => {
+                    setSubmitted(false)
+                    setFormData({
+                      name: '',
+                      email: '',
+                      company: '',
+                      phone: '',
+                      service: '',
+                      message: ''
+                    })
+                  }}
+                  className="px-6 py-3 glass hover:bg-dark-800 rounded-lg font-semibold transition-all duration-300"
+                >
+                  Submit Another Inquiry
+                </button>
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </section>
