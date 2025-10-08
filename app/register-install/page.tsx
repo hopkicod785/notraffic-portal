@@ -119,12 +119,45 @@ export default function RegisterInstall() {
 
   const handleSubmit = async () => {
     try {
-      // In a real implementation, you'd upload files to cloud storage first
-      // For now, we'll store file names
+      // Upload signal phasing files
+      let phasingFilePaths: string[] = []
+      if (formData.signalPhasingFiles.length > 0) {
+        const phasingFormData = new FormData()
+        formData.signalPhasingFiles.forEach(file => {
+          phasingFormData.append('files', file)
+        })
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: phasingFormData,
+        })
+        const uploadData = await uploadRes.json()
+        if (uploadData.success) {
+          phasingFilePaths = uploadData.files
+        }
+      }
+
+      // Upload signal timing files
+      let timingFilePaths: string[] = []
+      if (formData.signalTimingFiles.length > 0) {
+        const timingFormData = new FormData()
+        formData.signalTimingFiles.forEach(file => {
+          timingFormData.append('files', file)
+        })
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: timingFormData,
+        })
+        const uploadData = await uploadRes.json()
+        if (uploadData.success) {
+          timingFilePaths = uploadData.files
+        }
+      }
+
+      // Submit registration with file paths
       const submissionData = {
         ...formData,
-        signalPhasingFiles: formData.signalPhasingFiles.map(f => f.name),
-        signalTimingFiles: formData.signalTimingFiles.map(f => f.name),
+        signalPhasingFiles: phasingFilePaths,
+        signalTimingFiles: timingFilePaths,
       }
 
       const response = await fetch('/api/installation-registration', {
@@ -165,7 +198,7 @@ export default function RegisterInstall() {
     setShowSuccess(false)
   }
 
-  const handleFileUpload = (field: 'signalPhasingFiles' | 'signalTimingFiles', files: FileList | null) => {
+  const handleFileUpload = async (field: 'signalPhasingFiles' | 'signalTimingFiles', files: FileList | null) => {
     if (files) {
       const fileArray = Array.from(files)
       setFormData({ ...formData, [field]: [...formData[field], ...fileArray] })

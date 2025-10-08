@@ -590,9 +590,19 @@ export default function AdminDashboard() {
                 {selectedItem.signalPhasingFiles && selectedItem.signalPhasingFiles.length > 0 && (
                   <div className="bg-dark-900 p-4 rounded-lg">
                     <p className="text-xs text-gray-500 mb-2">Signal Phasing Files</p>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {selectedItem.signalPhasingFiles.map((file: string, idx: number) => (
-                        <p key={idx} className="text-sm text-gray-300">📄 {file}</p>
+                        <a
+                          key={idx}
+                          href={file}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-primary-300 hover:text-primary-400 transition-colors"
+                        >
+                          <FiDownload className="w-4 h-4" />
+                          {file.split('/').pop()} {/* Show just filename */}
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -601,9 +611,19 @@ export default function AdminDashboard() {
                 {selectedItem.signalTimingFiles && selectedItem.signalTimingFiles.length > 0 && (
                   <div className="bg-dark-900 p-4 rounded-lg">
                     <p className="text-xs text-gray-500 mb-2">Signal Timing Files</p>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {selectedItem.signalTimingFiles.map((file: string, idx: number) => (
-                        <p key={idx} className="text-sm text-gray-300">📄 {file}</p>
+                        <a
+                          key={idx}
+                          href={file}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-primary-300 hover:text-primary-400 transition-colors"
+                        >
+                          <FiDownload className="w-4 h-4" />
+                          {file.split('/').pop()} {/* Show just filename */}
+                        </a>
                       ))}
                     </div>
                   </div>

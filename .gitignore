@@ -38,3 +38,7 @@ next-env.d.ts
 /public/resources/videos/*.mov
 /public/resources/videos/*.avi
 
+# User uploaded files
+/public/uploads/*
+!/public/uploads/.gitkeep
+
