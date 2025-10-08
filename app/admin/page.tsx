@@ -666,6 +666,18 @@ export default function AdminDashboard() {
               </div>
             )}
 
+            {/* Debug: Show raw data */}
+            <div className="mt-6">
+              <details className="bg-dark-900 p-4 rounded-lg">
+                <summary className="text-xs text-gray-500 cursor-pointer hover:text-primary-300">
+                  Show Raw Data (Debug)
+                </summary>
+                <pre className="text-xs text-gray-300 whitespace-pre-wrap mt-4 overflow-x-auto">
+                  {JSON.stringify(selectedItem, null, 2)}
+                </pre>
+              </details>
+            </div>
+
             {/* Fallback for other types */}
             {!selectedItem.agency && (
               <pre className="text-sm text-gray-300 whitespace-pre-wrap bg-dark-900 p-4 rounded-lg overflow-x-auto">
