@@ -2,7 +2,9 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { FiPackage, FiTool, FiFileText, FiRefreshCw, FiDownload, FiEye, FiSettings, FiX } from 'react-icons/fi'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { FiPackage, FiTool, FiFileText, FiRefreshCw, FiDownload, FiEye, FiSettings, FiX, FiLogOut } from 'react-icons/fi'
 
 interface ProductInquiry {
   id: string
@@ -55,6 +57,8 @@ interface InstallationRegistration {
 }
 
 export default function AdminDashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<'inquiries' | 'services' | 'assessments' | 'registrations'>('inquiries')
   const [inquiries, setInquiries] = useState<ProductInquiry[]>([])
   const [serviceInquiries, setServiceInquiries] = useState<ServiceInquiry[]>([])
@@ -63,6 +67,19 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false)
   const [selectedItem, setSelectedItem] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-950">
+        <FiRefreshCw className="w-12 h-12 text-primary-300 animate-spin" />
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/admin/login')
+    return null
+  }
 
   const loadData = async () => {
     setLoading(true)
@@ -174,6 +191,13 @@ export default function AdminDashboard() {
               <p className="text-gray-400">Manage all portal submissions and data</p>
             </div>
             <div className="flex gap-3">
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="flex items-center gap-2 px-4 py-2 glass hover:bg-dark-800 rounded-lg font-semibold transition-all duration-300"
+              >
+                <FiLogOut className="w-5 h-5" />
+                Sign Out
+              </button>
               <button
                 onClick={loadData}
                 className="flex items-center gap-2 px-4 py-2 glass hover:bg-dark-800 rounded-lg font-semibold transition-all duration-300"

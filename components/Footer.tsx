@@ -48,9 +48,17 @@ export default function Footer() {
               <p className="text-gray-400 text-sm">
                 © {currentYear} NoTraffic. All rights reserved.
               </p>
-              <p className="text-gray-500 text-sm">
-                Intelligent Traffic Management Solutions
-              </p>
+              <div className="flex items-center gap-6">
+                <Link 
+                  href="/admin/login"
+                  className="text-gray-500 hover:text-primary-300 text-sm transition-colors"
+                >
+                  Admin Login
+                </Link>
+                <p className="text-gray-500 text-sm">
+                  Intelligent Traffic Management Solutions
+                </p>
+              </div>
             </div>
           </div>
         </div>
