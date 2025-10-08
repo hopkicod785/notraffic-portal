@@ -386,7 +386,12 @@ export default function InstallationTool() {
                         })}
                       </div>
                       <button
-                        onClick={() => handleAnswer(answers[currentStepData.id] || [])}
+                        onClick={() => {
+                          const value = answers[currentStepData.id]
+                          if (Array.isArray(value)) {
+                            handleAnswer(value)
+                          }
+                        }}
                         disabled={!(answers[currentStepData.id] as string[])?.length}
                         className="w-full px-6 py-4 bg-primary-500 hover:bg-primary-600 disabled:bg-dark-700 disabled:cursor-not-allowed rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
                       >
