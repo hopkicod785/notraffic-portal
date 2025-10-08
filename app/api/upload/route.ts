@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,28 +6,17 @@ export async function POST(request: NextRequest) {
     const files = formData.getAll('files') as File[]
     const uploadedFiles: string[] = []
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
+    // For serverless/Railway, convert files to data URLs (base64)
+    // This stores files in the database instead of filesystem
     for (const file of files) {
       if (file instanceof File) {
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
-
-        // Create unique filename
-        const timestamp = Date.now()
-        const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-        const filename = `${timestamp}_${safeName}`
-        const filepath = join(uploadsDir, filename)
-
-        // Save file
-        await writeFile(filepath, buffer)
+        const base64 = buffer.toString('base64')
         
-        // Store the URL path
-        uploadedFiles.push(`/uploads/${filename}`)
+        // Create data URL with filename metadata
+        const dataUrl = `data:${file.type};name=${encodeURIComponent(file.name)};base64,${base64}`
+        uploadedFiles.push(dataUrl)
       }
     }
 
@@ -42,7 +28,8 @@ export async function POST(request: NextRequest) {
     console.error('Error uploading files:', error)
     return NextResponse.json({ 
       success: false, 
-      message: 'Failed to upload files' 
+      message: 'Failed to upload files',
+      error: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }

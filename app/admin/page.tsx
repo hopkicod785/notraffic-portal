@@ -608,22 +608,31 @@ export default function AdminDashboard() {
                       <p className="text-xs text-gray-500 mb-2">Signal Phasing Files ({selectedItem.signalPhasingFiles?.length || 0})</p>
                       {selectedItem.signalPhasingFiles && selectedItem.signalPhasingFiles.length > 0 ? (
                         <div className="space-y-2">
-                          {selectedItem.signalPhasingFiles.map((file: string, idx: number) => (
-                            <a
-                              key={idx}
-                              href={file}
-                              download
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-3 p-3 bg-dark-800 hover:bg-dark-700 rounded-lg transition-colors group"
-                            >
-                              <FiDownload className="w-5 h-5 text-primary-300 group-hover:text-primary-400" />
-                              <span className="text-sm text-gray-300 group-hover:text-white flex-1">
-                                {file.split('/').pop()?.replace(/^\d+_/, '')} {/* Remove timestamp prefix */}
-                              </span>
-                              <span className="text-xs text-gray-500">Download</span>
-                            </a>
-                          ))}
+                          {selectedItem.signalPhasingFiles.map((file: string, idx: number) => {
+                            // Extract filename from data URL or regular path
+                            const getFileName = (fileStr: string) => {
+                              if (fileStr.startsWith('data:')) {
+                                const match = fileStr.match(/name=([^;]+)/)
+                                return match ? decodeURIComponent(match[1]) : `file-${idx + 1}`
+                              }
+                              return fileStr.split('/').pop()?.replace(/^\d+_/, '') || `file-${idx + 1}`
+                            }
+
+                            return (
+                              <a
+                                key={idx}
+                                href={file}
+                                download={getFileName(file)}
+                                className="flex items-center gap-3 p-3 bg-dark-800 hover:bg-dark-700 rounded-lg transition-colors group cursor-pointer"
+                              >
+                                <FiDownload className="w-5 h-5 text-primary-300 group-hover:text-primary-400" />
+                                <span className="text-sm text-gray-300 group-hover:text-white flex-1">
+                                  {getFileName(file)}
+                                </span>
+                                <span className="text-xs text-gray-500">Download</span>
+                              </a>
+                            )
+                          })}
                         </div>
                       ) : (
                         <p className="text-sm text-gray-500 italic">No files uploaded</p>
@@ -635,22 +644,31 @@ export default function AdminDashboard() {
                       <p className="text-xs text-gray-500 mb-2">Signal Timing Files ({selectedItem.signalTimingFiles?.length || 0})</p>
                       {selectedItem.signalTimingFiles && selectedItem.signalTimingFiles.length > 0 ? (
                         <div className="space-y-2">
-                          {selectedItem.signalTimingFiles.map((file: string, idx: number) => (
-                            <a
-                              key={idx}
-                              href={file}
-                              download
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-3 p-3 bg-dark-800 hover:bg-dark-700 rounded-lg transition-colors group"
-                            >
-                              <FiDownload className="w-5 h-5 text-primary-300 group-hover:text-primary-400" />
-                              <span className="text-sm text-gray-300 group-hover:text-white flex-1">
-                                {file.split('/').pop()?.replace(/^\d+_/, '')} {/* Remove timestamp prefix */}
-                              </span>
-                              <span className="text-xs text-gray-500">Download</span>
-                            </a>
-                          ))}
+                          {selectedItem.signalTimingFiles.map((file: string, idx: number) => {
+                            // Extract filename from data URL or regular path
+                            const getFileName = (fileStr: string) => {
+                              if (fileStr.startsWith('data:')) {
+                                const match = fileStr.match(/name=([^;]+)/)
+                                return match ? decodeURIComponent(match[1]) : `file-${idx + 1}`
+                              }
+                              return fileStr.split('/').pop()?.replace(/^\d+_/, '') || `file-${idx + 1}`
+                            }
+
+                            return (
+                              <a
+                                key={idx}
+                                href={file}
+                                download={getFileName(file)}
+                                className="flex items-center gap-3 p-3 bg-dark-800 hover:bg-dark-700 rounded-lg transition-colors group cursor-pointer"
+                              >
+                                <FiDownload className="w-5 h-5 text-primary-300 group-hover:text-primary-400" />
+                                <span className="text-sm text-gray-300 group-hover:text-white flex-1">
+                                  {getFileName(file)}
+                                </span>
+                                <span className="text-xs text-gray-500">Download</span>
+                              </a>
+                            )
+                          })}
                         </div>
                       ) : (
                         <p className="text-sm text-gray-500 italic">No files uploaded</p>
