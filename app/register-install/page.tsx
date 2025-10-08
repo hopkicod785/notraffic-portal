@@ -34,6 +34,7 @@ export default function RegisterInstall() {
     phone: ''
   })
   const [showSuccess, setShowSuccess] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   const steps = [
     {
@@ -118,10 +119,12 @@ export default function RegisterInstall() {
   }
 
   const handleSubmit = async () => {
+    setUploading(true)
     try {
       // Upload signal phasing files
       let phasingFilePaths: string[] = []
       if (formData.signalPhasingFiles.length > 0) {
+        console.log('Uploading phasing files:', formData.signalPhasingFiles.length)
         const phasingFormData = new FormData()
         formData.signalPhasingFiles.forEach(file => {
           phasingFormData.append('files', file)
@@ -131,14 +134,18 @@ export default function RegisterInstall() {
           body: phasingFormData,
         })
         const uploadData = await uploadRes.json()
+        console.log('Phasing upload response:', uploadData)
         if (uploadData.success) {
           phasingFilePaths = uploadData.files
+        } else {
+          console.error('Phasing file upload failed:', uploadData)
         }
       }
 
       // Upload signal timing files
       let timingFilePaths: string[] = []
       if (formData.signalTimingFiles.length > 0) {
+        console.log('Uploading timing files:', formData.signalTimingFiles.length)
         const timingFormData = new FormData()
         formData.signalTimingFiles.forEach(file => {
           timingFormData.append('files', file)
@@ -148,17 +155,33 @@ export default function RegisterInstall() {
           body: timingFormData,
         })
         const uploadData = await uploadRes.json()
+        console.log('Timing upload response:', uploadData)
         if (uploadData.success) {
           timingFilePaths = uploadData.files
+        } else {
+          console.error('Timing file upload failed:', uploadData)
         }
       }
 
+      console.log('Final file paths - Phasing:', phasingFilePaths)
+      console.log('Final file paths - Timing:', timingFilePaths)
+
       // Submit registration with file paths
       const submissionData = {
-        ...formData,
+        agency: formData.agency,
+        distributor: formData.distributor,
+        intersections: formData.intersections,
+        estimatedDate: formData.estimatedDate,
+        cabinetType: formData.cabinetType,
         signalPhasingFiles: phasingFilePaths,
         signalTimingFiles: timingFilePaths,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
       }
+
+      console.log('Submitting registration:', submissionData)
 
       const response = await fetch('/api/installation-registration', {
         method: 'POST',
@@ -169,14 +192,19 @@ export default function RegisterInstall() {
       })
 
       const data = await response.json()
+      console.log('Registration response:', data)
       
       if (data.success) {
         setShowSuccess(true)
       } else {
-        console.error('Failed to submit registration')
+        console.error('Failed to submit registration:', data)
+        alert('Failed to submit registration. Check console for details.')
       }
     } catch (error) {
       console.error('Error submitting registration:', error)
+      alert('Error submitting registration. Check console for details.')
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -467,10 +495,10 @@ export default function RegisterInstall() {
                   {/* Continue Button */}
                   <button
                     onClick={handleNext}
-                    disabled={!canProceed()}
+                    disabled={!canProceed() || uploading}
                     className="w-full mt-6 px-6 py-4 bg-primary-500 hover:bg-primary-600 disabled:bg-dark-700 disabled:cursor-not-allowed rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
                   >
-                    {currentStep === steps.length - 1 ? 'Submit Registration' : 'Continue'}
+                    {uploading ? 'Uploading files...' : currentStep === steps.length - 1 ? 'Submit Registration' : 'Continue'}
                     <FiArrowRight />
                   </button>
                 </motion.div>
