@@ -3,6 +3,13 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
+    if (!prisma) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Database not configured' 
+      }, { status: 503 })
+    }
+
     const body = await request.json()
     
     const inquiry = await prisma.productInquiry.create({
@@ -34,6 +41,10 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    if (!prisma) {
+      return NextResponse.json({ success: true, data: [] })
+    }
+
     const inquiries = await prisma.productInquiry.findMany({
       orderBy: { createdAt: 'desc' }
     })
