@@ -19,9 +19,25 @@ export default function Services() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // For now, just show success. You could send to a different API endpoint
-    setSubmitted(true)
-    console.log('Service inquiry submitted:', formData)
+    try {
+      const response = await fetch('/api/service-inquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        setSubmitted(true)
+      } else {
+        console.error('Failed to submit service inquiry')
+      }
+    } catch (error) {
+      console.error('Error submitting service inquiry:', error)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

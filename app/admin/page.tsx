@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { FiPackage, FiTool, FiFileText, FiRefreshCw, FiDownload, FiEye } from 'react-icons/fi'
+import { FiPackage, FiTool, FiFileText, FiRefreshCw, FiDownload, FiEye, FiSettings } from 'react-icons/fi'
 
 interface ProductInquiry {
   id: string
@@ -11,6 +11,18 @@ interface ProductInquiry {
   company: string | null
   phone: string | null
   product: string
+  message: string
+  status: string
+  createdAt: string
+}
+
+interface ServiceInquiry {
+  id: string
+  name: string
+  email: string
+  company: string | null
+  phone: string | null
+  service: string
   message: string
   status: string
   createdAt: string
@@ -43,8 +55,9 @@ interface InstallationRegistration {
 }
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'inquiries' | 'assessments' | 'registrations'>('inquiries')
+  const [activeTab, setActiveTab] = useState<'inquiries' | 'services' | 'assessments' | 'registrations'>('inquiries')
   const [inquiries, setInquiries] = useState<ProductInquiry[]>([])
+  const [serviceInquiries, setServiceInquiries] = useState<ServiceInquiry[]>([])
   const [assessments, setAssessments] = useState<InstallationAssessment[]>([])
   const [registrations, setRegistrations] = useState<InstallationRegistration[]>([])
   const [loading, setLoading] = useState(false)
@@ -57,6 +70,10 @@ export default function AdminDashboard() {
         const res = await fetch('/api/product-inquiry')
         const data = await res.json()
         if (data.success) setInquiries(data.data)
+      } else if (activeTab === 'services') {
+        const res = await fetch('/api/service-inquiry')
+        const data = await res.json()
+        if (data.success) setServiceInquiries(data.data)
       } else if (activeTab === 'assessments') {
         const res = await fetch('/api/installation-assessment')
         const data = await res.json()
@@ -87,6 +104,12 @@ export default function AdminDashboard() {
         csvContent += `"${item.id}","${item.name}","${item.email}","${item.company || ''}","${item.phone || ''}","${item.product}","${item.message}","${item.status}","${new Date(item.createdAt).toLocaleString()}"\n`
       })
       filename = 'product-inquiries.csv'
+    } else if (activeTab === 'services') {
+      csvContent = 'ID,Name,Email,Company,Phone,Service,Message,Status,Created\n'
+      serviceInquiries.forEach(item => {
+        csvContent += `"${item.id}","${item.name}","${item.email}","${item.company || ''}","${item.phone || ''}","${item.service}","${item.message}","${item.status}","${new Date(item.createdAt).toLocaleString()}"\n`
+      })
+      filename = 'service-inquiries.csv'
     } else if (activeTab === 'assessments') {
       csvContent = 'ID,Deployment Type,Intersections,Timeline,Created\n'
       assessments.forEach(item => {
@@ -151,6 +174,18 @@ export default function AdminDashboard() {
               <FiPackage className="w-5 h-5" />
               Product Inquiries
               <span className="px-2 py-1 bg-dark-900 rounded-full text-xs">{inquiries.length}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('services')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 whitespace-nowrap ${
+                activeTab === 'services'
+                  ? 'bg-primary-500 text-white'
+                  : 'glass text-gray-300 hover:bg-dark-800'
+              }`}
+            >
+              <FiSettings className="w-5 h-5" />
+              Service Inquiries
+              <span className="px-2 py-1 bg-dark-900 rounded-full text-xs">{serviceInquiries.length}</span>
             </button>
             <button
               onClick={() => setActiveTab('assessments')}
@@ -245,6 +280,68 @@ export default function AdminDashboard() {
                     <div className="text-center py-20 glass rounded-xl border border-dark-700">
                       <FiPackage className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                       <p className="text-gray-400">No product inquiries yet</p>
+                    </div>
+                  )
+                )}
+
+                {/* Service Inquiries */}
+                {activeTab === 'services' && (
+                  serviceInquiries.length > 0 ? (
+                    serviceInquiries.map((inquiry) => (
+                      <motion.div
+                        key={inquiry.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="glass rounded-xl p-6 border border-dark-700 hover:border-primary-500/50 transition-all"
+                      >
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h3 className="text-xl font-bold mb-1">{inquiry.name}</h3>
+                            <p className="text-sm text-gray-400">{inquiry.email}</p>
+                          </div>
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            inquiry.status === 'new' ? 'bg-green-500/20 text-green-400' :
+                            inquiry.status === 'contacted' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {inquiry.status}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                          <div>
+                            <span className="text-gray-500">Company:</span>
+                            <span className="ml-2 text-gray-300">{inquiry.company || 'N/A'}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Phone:</span>
+                            <span className="ml-2 text-gray-300">{inquiry.phone || 'N/A'}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Service:</span>
+                            <span className="ml-2 text-primary-300">{inquiry.service}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Date:</span>
+                            <span className="ml-2 text-gray-300">{new Date(inquiry.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <div className="pt-4 border-t border-dark-700">
+                          <p className="text-sm text-gray-400 mb-2">Message:</p>
+                          <p className="text-gray-300">{inquiry.message}</p>
+                        </div>
+                        <button
+                          onClick={() => setSelectedItem(inquiry)}
+                          className="mt-4 flex items-center gap-2 px-4 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all"
+                        >
+                          <FiEye className="w-4 h-4" />
+                          View Details
+                        </button>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="text-center py-20 glass rounded-xl border border-dark-700">
+                      <FiSettings className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-400">No service inquiries yet</p>
                     </div>
                   )
                 )}
