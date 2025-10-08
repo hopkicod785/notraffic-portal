@@ -425,7 +425,7 @@ export default function RegisterInstall() {
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           className="w-full px-4 py-3 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors"
-                          placeholder="+1 (555) 123-4567"
+                          placeholder="1-202-800-1890"
                         />
                       </div>
                     </div>

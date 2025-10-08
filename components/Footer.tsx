@@ -34,7 +34,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center gap-2">
               <FiPhone className="w-4 h-4" />
-              <span>+1 (555) 123-4567</span>
+              <span>1-202-800-1890</span>
             </div>
             <div className="flex items-center gap-2">
               <FiMapPin className="w-4 h-4" />
