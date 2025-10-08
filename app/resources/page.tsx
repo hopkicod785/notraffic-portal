@@ -99,19 +99,37 @@ export default function Resources() {
                   transition={{ delay: index * 0.05, duration: 0.5 }}
                   className="glass rounded-xl overflow-hidden hover:border-primary-500/50 transition-all duration-300 border border-dark-700 flex flex-col"
                 >
-                  {/* Video Player for video resources */}
-                  {resource.type === 'Video' && resource.filePath && !resource.externalUrl ? (
-                    <div className="relative aspect-video bg-black">
-                      <video 
-                        controls 
-                        className="w-full h-full"
-                        preload="metadata"
-                      >
-                        <source src={resource.filePath} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  ) : null}
+                      {/* Video Player for video resources */}
+                      {resource.type === 'Video' ? (
+                        <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                          {resource.externalUrl ? (
+                            // Embed external videos (YouTube, Vimeo, etc.)
+                            <iframe
+                              src={resource.externalUrl}
+                              className="w-full h-full"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              title={resource.title}
+                            />
+                          ) : resource.filePath ? (
+                            // Play local video files
+                            <video 
+                              controls 
+                              className="w-full h-full"
+                              preload="metadata"
+                            >
+                              <source src={resource.filePath} type="video/mp4" />
+                              <source src={resource.filePath} type="video/webm" />
+                              <source src={resource.filePath} type="video/ogg" />
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-500">
+                              <span>Video not available</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
 
                   <div className="p-6 flex flex-col flex-grow">
                     <div className="flex items-start justify-between mb-4">
@@ -139,40 +157,56 @@ export default function Resources() {
                       <span>{resource.version}</span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-dark-700 gap-2">
-                      <span className="text-xs text-gray-500">
-                        Updated {resource.updated}
-                      </span>
-                      <div className="flex gap-2">
-                        {resource.type === 'Video' && resource.filePath && !resource.externalUrl ? (
-                          <a
-                            href={resource.filePath}
-                            download
-                            className="flex items-center gap-1 px-3 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all duration-300"
-                          >
-                            <FiDownload className="w-4 h-4" />
-                          </a>
-                        ) : (resource.filePath || resource.externalUrl) ? (
-                          <a
-                            href={resource.externalUrl || resource.filePath}
-                            target={resource.externalUrl ? '_blank' : '_self'}
-                            rel={resource.externalUrl ? 'noopener noreferrer' : undefined}
-                            download={resource.filePath && !resource.externalUrl ? true : undefined}
-                            className="flex items-center gap-2 px-4 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all duration-300"
-                          >
-                            {resource.type === 'Online' || resource.externalUrl ? 'View' : 'Download'}
-                            {resource.type === 'Online' || resource.externalUrl ? <FiExternalLink className="w-4 h-4" /> : <FiDownload className="w-4 h-4" />}
-                          </a>
-                        ) : (
-                          <button 
-                            disabled
-                            className="flex items-center gap-2 px-4 py-2 bg-dark-700 text-gray-500 rounded-lg font-semibold text-sm cursor-not-allowed"
-                          >
-                            Coming Soon
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                        <div className="flex items-center justify-between pt-4 border-t border-dark-700 gap-2">
+                          <span className="text-xs text-gray-500">
+                            Updated {resource.updated}
+                          </span>
+                          <div className="flex gap-2">
+                            {resource.type === 'Video' ? (
+                              // Video resources - show download for local, external link for hosted
+                              resource.filePath && !resource.externalUrl ? (
+                                <a
+                                  href={resource.filePath}
+                                  download
+                                  className="flex items-center gap-2 px-3 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all duration-300"
+                                  title="Download video"
+                                >
+                                  <FiDownload className="w-4 h-4" />
+                                  Download
+                                </a>
+                              ) : resource.externalUrl ? (
+                                <a
+                                  href={resource.externalUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-2 px-3 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all duration-300"
+                                  title="Open video"
+                                >
+                                  <FiExternalLink className="w-4 h-4" />
+                                  Watch
+                                </a>
+                              ) : null
+                            ) : (resource.filePath || resource.externalUrl) ? (
+                              <a
+                                href={resource.externalUrl || resource.filePath}
+                                target={resource.externalUrl ? '_blank' : '_self'}
+                                rel={resource.externalUrl ? 'noopener noreferrer' : undefined}
+                                download={resource.filePath && !resource.externalUrl ? true : undefined}
+                                className="flex items-center gap-2 px-4 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-sm transition-all duration-300"
+                              >
+                                {resource.type === 'Online' || resource.externalUrl ? 'View' : 'Download'}
+                                {resource.type === 'Online' || resource.externalUrl ? <FiExternalLink className="w-4 h-4" /> : <FiDownload className="w-4 h-4" />}
+                              </a>
+                            ) : (
+                              <button 
+                                disabled
+                                className="flex items-center gap-2 px-4 py-2 bg-dark-700 text-gray-500 rounded-lg font-semibold text-sm cursor-not-allowed"
+                              >
+                                Coming Soon
+                              </button>
+                            )}
+                          </div>
+                        </div>
                   </div>
                 </motion.div>
               ))}
