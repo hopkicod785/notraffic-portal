@@ -1,0 +1,7 @@
+# NoTraffic Portal - robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://portal.notraffic.tech/sitemap.xml
+

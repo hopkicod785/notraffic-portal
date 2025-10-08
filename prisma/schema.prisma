@@ -1,0 +1,69 @@
+// Prisma Schema for NoTraffic Portal
+// This defines the database structure for storing form submissions
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Product Inquiries
+model ProductInquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String?
+  phone     String?
+  product   String
+  message   String   @db.Text
+  status    String   @default("new") // new, contacted, completed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Installation Assessment Results
+model InstallationAssessment {
+  id              String   @id @default(cuid())
+  deploymentType  String
+  cabinetType     String[] // Array of selected cabinet types
+  intersections   Int
+  equipment       Json     // Store equipment quantities as JSON
+  auxiliary       Json     // Store auxiliary equipment as JSON
+  timeline        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Installation Registrations
+model InstallationRegistration {
+  id                   String   @id @default(cuid())
+  agency               String
+  distributor          String
+  intersections        String   @db.Text // Can be multiple, stored as text
+  estimatedDate        DateTime
+  cabinetType          String[] // Array of selected cabinet types
+  signalPhasingFiles   String[] // File paths/URLs
+  signalTimingFiles    String[] // File paths/URLs
+  firstName            String
+  lastName             String
+  email                String
+  phone                String
+  status               String   @default("pending") // pending, in-progress, completed
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// Admin Users
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hashed password
+  name      String
+  role      String   @default("admin") // admin, superadmin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
