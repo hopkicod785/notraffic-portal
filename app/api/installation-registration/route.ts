@@ -52,10 +52,36 @@ export async function GET() {
     }
 
     const registrations = await prisma.installationRegistration.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        agency: true,
+        distributor: true,
+        intersections: true,
+        estimatedDate: true,
+        cabinetType: true,
+        cabinetTypeOther: true,
+        // Exclude file contents from list view - only get counts
+        signalPhasingFiles: true,
+        signalTimingFiles: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
+      }
     })
 
-    return NextResponse.json({ success: true, data: registrations })
+    // Strip out base64 data from files to reduce response size
+    const lightweightRegistrations = registrations.map(reg => ({
+      ...reg,
+      signalPhasingFiles: reg.signalPhasingFiles?.length ? [`${reg.signalPhasingFiles.length} file(s)`] : [],
+      signalTimingFiles: reg.signalTimingFiles?.length ? [`${reg.signalTimingFiles.length} file(s)`] : []
+    }))
+
+    return NextResponse.json({ success: true, data: lightweightRegistrations })
   } catch (error) {
     console.error('Error fetching registrations:', error)
     return NextResponse.json({ success: false, message: 'Failed to fetch registrations' }, { status: 500 })

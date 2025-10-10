@@ -71,6 +71,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false)
   const [selectedItem, setSelectedItem] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [loadingDetails, setLoadingDetails] = useState(false)
 
   const loadData = async () => {
     setLoading(true)
@@ -98,6 +99,22 @@ export default function AdminDashboard() {
       console.error('Error loading data:', error)
     }
     setLoading(false)
+  }
+
+  const loadRegistrationDetails = async (id: string) => {
+    setLoadingDetails(true)
+    try {
+      const res = await fetch(`/api/installation-registration/${id}`)
+      const data = await res.json()
+      if (data.success) {
+        setSelectedItem(data.data)
+      } else {
+        console.error('Failed to load registration details:', data)
+      }
+    } catch (error) {
+      console.error('Error loading registration details:', error)
+    }
+    setLoadingDetails(false)
   }
 
   useEffect(() => {
@@ -502,11 +519,12 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <button
-                          onClick={() => setSelectedItem(registration)}
-                          className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-xs transition-all"
+                          onClick={() => loadRegistrationDetails(registration.id)}
+                          disabled={loadingDetails}
+                          className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2 bg-primary-500/20 hover:bg-primary-500 text-primary-300 hover:text-white rounded-lg font-semibold text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <FiEye className="w-4 h-4" />
-                          View Full Details
+                          {loadingDetails ? 'Loading...' : 'View Full Details'}
                         </button>
                       </motion.div>
                     ))
@@ -603,6 +621,12 @@ export default function AdminDashboard() {
                       <p className="text-gray-400 text-sm">No cabinet types selected</p>
                     )}
                   </div>
+                  {selectedItem.cabinetTypeOther && (
+                    <div className="mt-3 pt-3 border-t border-dark-700">
+                      <p className="text-xs text-gray-500 mb-1">Custom Cabinet Type (Other)</p>
+                      <p className="text-gray-300 font-semibold">{selectedItem.cabinetTypeOther}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-dark-900 p-4 rounded-lg border-2 border-primary-500/30">
