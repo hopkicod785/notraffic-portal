@@ -72,6 +72,19 @@ model InstallationRegistration {
   updatedAt            DateTime @updatedAt
 }
 
+// MOS Account Registrations
+model MOSAccountRegistration {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  agency    String
+  email     String
+  phone     String?
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // Admin Users
 model AdminUser {
   id        String   @id @default(cuid())

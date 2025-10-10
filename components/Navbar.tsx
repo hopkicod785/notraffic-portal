@@ -26,7 +26,7 @@ export default function Navbar() {
     { name: 'Products', href: '/products' },
     { name: 'Services', href: '/services' },
     { name: 'Installation Tool', href: '/installation-tool' },
-    { name: 'Register Install', href: '/register-install' },
+    { name: 'Register', href: '/register' },
     { name: 'Resources', href: '/resources' },
   ]
 

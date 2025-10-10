@@ -33,13 +33,13 @@ export default function Home() {
       link: "/installation-tool",
       color: "from-orange-500 to-red-500"
     },
-    {
-      icon: <FiFileText className="w-8 h-8" />,
-      title: "Register Install",
-      description: "Register your upcoming NoTraffic installation",
-      link: "/register-install",
-      color: "from-indigo-500 to-blue-500"
-    },
+        {
+          icon: <FiFileText className="w-8 h-8" />,
+          title: "Register",
+          description: "Register installations and MOS accounts",
+          link: "/register",
+          color: "from-indigo-500 to-blue-500"
+        },
     {
       icon: <FiBook className="w-8 h-8" />,
       title: "Resources",

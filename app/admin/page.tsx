@@ -60,14 +60,26 @@ interface InstallationRegistration {
   createdAt: string
 }
 
+interface MOSAccountRegistration {
+  id: string
+  firstName: string
+  lastName: string
+  agency: string
+  email: string
+  phone: string | null
+  status: string
+  createdAt: string
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'inquiries' | 'services' | 'assessments' | 'registrations'>('inquiries')
+  const [activeTab, setActiveTab] = useState<'inquiries' | 'services' | 'assessments' | 'registrations' | 'mos-accounts'>('inquiries')
   const [inquiries, setInquiries] = useState<ProductInquiry[]>([])
   const [serviceInquiries, setServiceInquiries] = useState<ServiceInquiry[]>([])
   const [assessments, setAssessments] = useState<InstallationAssessment[]>([])
   const [registrations, setRegistrations] = useState<InstallationRegistration[]>([])
+  const [mosAccounts, setMosAccounts] = useState<MOSAccountRegistration[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedItem, setSelectedItem] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -94,6 +106,10 @@ export default function AdminDashboard() {
         console.log('Install registrations response:', data)
         if (data.success) setRegistrations(data.data)
         else console.error('Failed to load registrations:', data)
+      } else if (activeTab === 'mos-accounts') {
+        const res = await fetch('/api/mos-account-registration')
+        const data = await res.json()
+        if (data.success) setMosAccounts(data.data)
       }
     } catch (error) {
       console.error('Error loading data:', error)
@@ -151,6 +167,38 @@ export default function AdminDashboard() {
     item.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const filteredMosAccounts = mosAccounts.filter(item =>
+    item.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.agency.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.email.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const updateStatus = async (id: string, newStatus: string, type: string) => {
+    try {
+      const apiEndpoint = 
+        type === 'inquiry' ? '/api/product-inquiry' :
+        type === 'service' ? '/api/service-inquiry' :
+        type === 'registration' ? '/api/installation-registration' :
+        type === 'mos-account' ? '/api/mos-account-registration' :
+        '/api/installation-assessment'
+
+      const res = await fetch(`${apiEndpoint}/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      })
+
+      if (res.ok) {
+        loadData() // Reload data after status update
+      } else {
+        console.error('Failed to update status')
+      }
+    } catch (error) {
+      console.error('Error updating status:', error)
+    }
+  }
+
   const exportToCSV = () => {
     let csvContent = ''
     let filename = ''
@@ -179,6 +227,12 @@ export default function AdminDashboard() {
         csvContent += `"${item.id}","${item.agency}","${item.distributor}","${item.firstName} ${item.lastName}","${item.email}","${item.phone}","${new Date(item.estimatedDate).toLocaleDateString()}","${item.status}","${new Date(item.createdAt).toLocaleString()}"\n`
       })
       filename = 'installation-registrations.csv'
+    } else if (activeTab === 'mos-accounts') {
+      csvContent = 'ID,First Name,Last Name,Agency,Email,Phone,Status,Created\n'
+      mosAccounts.forEach(item => {
+        csvContent += `"${item.id}","${item.firstName}","${item.lastName}","${item.agency}","${item.email}","${item.phone || ''}","${item.status}","${new Date(item.createdAt).toLocaleString()}"\n`
+      })
+      filename = 'mos-account-registrations.csv'
     }
 
     const blob = new Blob([csvContent], { type: 'text/csv' })
@@ -300,6 +354,18 @@ export default function AdminDashboard() {
               Install Registrations
               <span className="px-2 py-1 bg-dark-900 rounded-full text-xs">{registrations.length}</span>
             </button>
+            <button
+              onClick={() => setActiveTab('mos-accounts')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 whitespace-nowrap ${
+                activeTab === 'mos-accounts'
+                  ? 'bg-primary-500 text-white'
+                  : 'glass text-gray-300 hover:bg-dark-800'
+              }`}
+            >
+              <FiPackage className="w-5 h-5" />
+              MOS Accounts
+              <span className="px-2 py-1 bg-dark-900 rounded-full text-xs">{mosAccounts.length}</span>
+            </button>
           </div>
 
           {/* Content */}
@@ -326,13 +392,15 @@ export default function AdminDashboard() {
                             <h3 className="text-xl font-bold mb-1">{inquiry.name}</h3>
                             <p className="text-sm text-gray-400">{inquiry.email}</p>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            inquiry.status === 'new' ? 'bg-green-500/20 text-green-400' :
-                            inquiry.status === 'contacted' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {inquiry.status}
-                          </span>
+                          <select
+                            value={inquiry.status}
+                            onChange={(e) => updateStatus(inquiry.id, e.target.value, 'inquiry')}
+                            className="px-3 py-1 bg-dark-800 border border-dark-700 rounded-lg text-xs font-semibold focus:border-primary-500 outline-none"
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="completed">Completed</option>
+                          </select>
                         </div>
                         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                           <div>
@@ -388,13 +456,15 @@ export default function AdminDashboard() {
                             <h3 className="text-xl font-bold mb-1">{inquiry.name}</h3>
                             <p className="text-sm text-gray-400">{inquiry.email}</p>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            inquiry.status === 'new' ? 'bg-green-500/20 text-green-400' :
-                            inquiry.status === 'contacted' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {inquiry.status}
-                          </span>
+                          <select
+                            value={inquiry.status}
+                            onChange={(e) => updateStatus(inquiry.id, e.target.value, 'service')}
+                            className="px-3 py-1 bg-dark-800 border border-dark-700 rounded-lg text-xs font-semibold focus:border-primary-500 outline-none"
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="completed">Completed</option>
+                          </select>
                         </div>
                         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                           <div>
@@ -496,13 +566,15 @@ export default function AdminDashboard() {
                             <h3 className="text-lg font-bold">{registration.agency}</h3>
                             <p className="text-xs text-gray-400">{registration.firstName} {registration.lastName} • {registration.email}</p>
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${
-                            registration.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                            registration.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-green-500/20 text-green-400'
-                          }`}>
-                            {registration.status}
-                          </span>
+                          <select
+                            value={registration.status}
+                            onChange={(e) => updateStatus(registration.id, e.target.value, 'registration')}
+                            className="px-3 py-1 bg-dark-800 border border-dark-700 rounded-lg text-xs font-semibold focus:border-primary-500 outline-none whitespace-nowrap ml-2"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                          </select>
                         </div>
                         <div className="grid grid-cols-3 gap-2 mb-2 text-xs">
                           <div>
@@ -534,6 +606,58 @@ export default function AdminDashboard() {
                       <p className="text-gray-400">No installation registrations yet</p>
                     </div>
                   )
+                )}
+              </>
+            )}
+
+            {/* MOS Accounts Tab Content */}
+            {activeTab === 'mos-accounts' && (
+              <>
+                {filteredMosAccounts.length > 0 ? (
+                  filteredMosAccounts.map((account) => (
+                    <motion.div
+                      key={account.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="glass rounded-xl p-4 border border-dark-700 hover:border-primary-500/50 transition-all"
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold">{account.firstName} {account.lastName}</h3>
+                          <p className="text-xs text-gray-400">{account.agency}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={account.status}
+                            onChange={(e) => updateStatus(account.id, e.target.value, 'mos-account')}
+                            className="px-3 py-1 bg-dark-800 border border-dark-700 rounded-lg text-xs font-semibold focus:border-primary-500 outline-none"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <span className="text-gray-500">Email:</span>
+                          <span className="ml-1 text-primary-300">{account.email}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Phone:</span>
+                          <span className="ml-1 text-gray-300">{account.phone || 'N/A'}</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        Registered: {new Date(account.createdAt).toLocaleString()}
+                      </div>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="text-center py-20 glass rounded-xl border border-dark-700">
+                    <FiPackage className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-400">No MOS account registrations yet</p>
+                  </div>
                 )}
               </>
             )}
