@@ -249,13 +249,15 @@ export const resources: ResourceItem[] = [
   },
 
   // TRAINING VIDEOS
+  // NOTE: Video files are not in Git due to size. Update with YouTube/Vimeo embed URLs or cloud storage URLs
   {
     id: 40,
     title: 'AI Mobility Platform Overview',
     description: 'Introduction to the NoTraffic AI Mobility Platform',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/AI_Mobility_Platform.mp4',
+    filePath: '/resources/videos/AI_Mobility_Platform.mp4', // Local only - works in dev
+    // externalUrl: 'https://www.youtube.com/embed/YOUR_VIDEO_ID', // Uncomment and add your YouTube URL for production
     size: 'N/A',
     pages: null,
     version: '2024',

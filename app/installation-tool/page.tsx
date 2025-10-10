@@ -12,6 +12,7 @@ export default function InstallationTool() {
   const [currentStep, setCurrentStep] = useState(0)
   const [answers, setAnswers] = useState<Answer>({})
   const [showResults, setShowResults] = useState(false)
+  const [cabinetTypeOther, setCabinetTypeOther] = useState('')
 
   // Equipment state
   const [equipment, setEquipment] = useState({
@@ -47,11 +48,46 @@ export default function InstallationTool() {
       question: 'Select all cabinet types that apply',
       type: 'multi-select',
       options: [
-        { value: 'type-170', label: 'Type 170', description: '' },
-        { value: 'type-332', label: 'Type 332', description: '' },
-        { value: 'type-2070', label: 'Type 2070', description: '' },
-        { value: 'nema-ts1', label: 'NEMA TS-1', description: '' },
-        { value: 'nema-ts2', label: 'NEMA TS-2', description: '' },
+        { value: 'ts-1', label: 'TS-1', description: '' },
+        { value: 'ts-2-type-2', label: 'TS-2 Type 2', description: '' },
+        { value: 'ts-2-type-1', label: 'TS-2 Type 1', description: '' },
+        { value: 'p-44', label: 'P-44', description: '' },
+        { value: 'size-m', label: 'Size M', description: '' },
+        { value: 'size-r', label: 'Size R', description: '' },
+        { value: 'size-p', label: 'Size P', description: '' },
+        { value: 'size-o67', label: 'Size O67', description: '' },
+        { value: 'super-p', label: 'Super P', description: '' },
+        { value: 'mobotrex-fc', label: 'MoboTrex FC', description: '' },
+        { value: 'specline-nema-4x', label: 'Specline NEMA 4X Cabinet (SL)', description: '' },
+        { value: '332', label: '332', description: '' },
+        { value: '332ls', label: '332LS', description: '' },
+        { value: '332l', label: '332L', description: '' },
+        { value: '332d-332dl', label: '332D/332DL', description: '' },
+        { value: '334', label: '334', description: '' },
+        { value: '334l', label: '334L', description: '' },
+        { value: '334ls', label: '334LS', description: '' },
+        { value: '334lc', label: '334LC', description: '' },
+        { value: '336', label: '336', description: '' },
+        { value: '336s', label: '336S', description: '' },
+        { value: '336ls', label: '336LS', description: '' },
+        { value: '342lx', label: '342LX', description: '' },
+        { value: '344lx', label: '344LX', description: '' },
+        { value: '346lx', label: '346LX', description: '' },
+        { value: '552a', label: '552A', description: '' },
+        { value: '662', label: '662', description: '' },
+        { value: '350i', label: '350i', description: '' },
+        { value: '352i', label: '352i', description: '' },
+        { value: '353i', label: '353i', description: '' },
+        { value: '356i', label: '356i', description: '' },
+        { value: '357i', label: '357i', description: '' },
+        { value: '358i-backpack', label: '358i Backpack', description: '' },
+        { value: 'm-atc-rack', label: 'M ATC (Rack Mount)', description: '' },
+        { value: 'm-atc-shelf', label: 'M ATC (Shelf Mount)', description: '' },
+        { value: 'p44-atc', label: 'P44 ATC', description: '' },
+        { value: 'atcc-standard', label: 'ATCC Standard', description: '' },
+        { value: '340-its', label: '340 ITS', description: '' },
+        { value: '342-its', label: '342 ITS', description: '' },
+        { value: '346-its', label: '346 ITS', description: '' },
         { value: 'other', label: 'Other', description: '' }
       ]
     },
@@ -136,6 +172,7 @@ export default function InstallationTool() {
         auxiliary: auxEquipment,
         deploymentType: answers['deployment-type'],
         cabinetType: answers['cabinet-type'] || [],
+        cabinetTypeOther: cabinetTypeOther,
         intersections: answers['intersections'],
         timeline: answers['timeline']
       }
@@ -234,6 +271,7 @@ export default function InstallationTool() {
     setCurrentStep(0)
     setAnswers({})
     setShowResults(false)
+    setCabinetTypeOther('')
     setEquipment({
       nexusUnit: 0,
       sensorPowerUnit: 0,
@@ -385,6 +423,29 @@ export default function InstallationTool() {
                           )
                         })}
                       </div>
+
+                      {/* Other Text Input - Shows when "Other" is selected */}
+                      {(answers[currentStepData.id] as string[] || []).includes('other') && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="mt-4"
+                        >
+                          <label htmlFor="cabinet-other" className="block text-sm font-medium mb-2">
+                            Please specify other cabinet type:
+                          </label>
+                          <input
+                            type="text"
+                            id="cabinet-other"
+                            value={cabinetTypeOther}
+                            onChange={(e) => setCabinetTypeOther(e.target.value)}
+                            placeholder="Enter cabinet type..."
+                            className="w-full px-6 py-4 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors text-lg"
+                          />
+                        </motion.div>
+                      )}
+
                       <button
                         onClick={() => {
                           const value = answers[currentStepData.id]

@@ -10,6 +10,7 @@ interface FormData {
   intersections: string
   estimatedDate: string
   cabinetType: string[]
+  cabinetTypeOther: string
   signalPhasingFiles: File[]
   signalTimingFiles: File[]
   firstName: string
@@ -26,6 +27,7 @@ export default function RegisterInstall() {
     intersections: '',
     estimatedDate: '',
     cabinetType: [],
+    cabinetTypeOther: '',
     signalPhasingFiles: [],
     signalTimingFiles: [],
     firstName: '',
@@ -74,11 +76,46 @@ export default function RegisterInstall() {
       question: 'Select all applicable cabinet types',
       type: 'multi-select',
       options: [
-        { value: 'type-170', label: 'Type 170' },
-        { value: 'type-332', label: 'Type 332' },
-        { value: 'type-2070', label: 'Type 2070' },
-        { value: 'nema-ts1', label: 'NEMA TS-1' },
-        { value: 'nema-ts2', label: 'NEMA TS-2' },
+        { value: 'ts-1', label: 'TS-1' },
+        { value: 'ts-2-type-2', label: 'TS-2 Type 2' },
+        { value: 'ts-2-type-1', label: 'TS-2 Type 1' },
+        { value: 'p-44', label: 'P-44' },
+        { value: 'size-m', label: 'Size M' },
+        { value: 'size-r', label: 'Size R' },
+        { value: 'size-p', label: 'Size P' },
+        { value: 'size-o67', label: 'Size O67' },
+        { value: 'super-p', label: 'Super P' },
+        { value: 'mobotrex-fc', label: 'MoboTrex FC' },
+        { value: 'specline-nema-4x', label: 'Specline NEMA 4X Cabinet (SL)' },
+        { value: '332', label: '332' },
+        { value: '332ls', label: '332LS' },
+        { value: '332l', label: '332L' },
+        { value: '332d-332dl', label: '332D/332DL' },
+        { value: '334', label: '334' },
+        { value: '334l', label: '334L' },
+        { value: '334ls', label: '334LS' },
+        { value: '334lc', label: '334LC' },
+        { value: '336', label: '336' },
+        { value: '336s', label: '336S' },
+        { value: '336ls', label: '336LS' },
+        { value: '342lx', label: '342LX' },
+        { value: '344lx', label: '344LX' },
+        { value: '346lx', label: '346LX' },
+        { value: '552a', label: '552A' },
+        { value: '662', label: '662' },
+        { value: '350i', label: '350i' },
+        { value: '352i', label: '352i' },
+        { value: '353i', label: '353i' },
+        { value: '356i', label: '356i' },
+        { value: '357i', label: '357i' },
+        { value: '358i-backpack', label: '358i Backpack' },
+        { value: 'm-atc-rack', label: 'M ATC (Rack Mount)' },
+        { value: 'm-atc-shelf', label: 'M ATC (Shelf Mount)' },
+        { value: 'p44-atc', label: 'P44 ATC' },
+        { value: 'atcc-standard', label: 'ATCC Standard' },
+        { value: '340-its', label: '340 ITS' },
+        { value: '342-its', label: '342 ITS' },
+        { value: '346-its', label: '346 ITS' },
         { value: 'other', label: 'Other' }
       ]
     },
@@ -218,6 +255,7 @@ export default function RegisterInstall() {
       intersections: '',
       estimatedDate: '',
       cabinetType: [],
+      cabinetTypeOther: '',
       signalPhasingFiles: [],
       signalTimingFiles: [],
       firstName: '',
@@ -405,6 +443,28 @@ export default function RegisterInstall() {
                           )
                         })}
                       </div>
+
+                      {/* Other Text Input - Shows when "Other" is selected */}
+                      {formData.cabinetType.includes('other') && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="mt-4"
+                        >
+                          <label htmlFor="cabinet-other" className="block text-sm font-medium mb-2">
+                            Please specify other cabinet type:
+                          </label>
+                          <input
+                            type="text"
+                            id="cabinet-other"
+                            value={formData.cabinetTypeOther}
+                            onChange={(e) => setFormData({ ...formData, cabinetTypeOther: e.target.value })}
+                            placeholder="Enter cabinet type..."
+                            className="w-full px-6 py-4 bg-dark-900 border border-dark-700 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-colors text-lg"
+                          />
+                        </motion.div>
+                      )}
                     </div>
                   )}
 
