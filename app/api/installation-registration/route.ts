@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
         intersections: body.intersections,
         estimatedDate: new Date(body.estimatedDate),
         cabinetType: body.cabinetType || [],
+        cabinetTypeOther: body.cabinetTypeOther || null,
         signalPhasingFiles: body.signalPhasingFiles || [],
         signalTimingFiles: body.signalTimingFiles || [],
         firstName: body.firstName,

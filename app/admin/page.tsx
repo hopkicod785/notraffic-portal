@@ -34,6 +34,7 @@ interface InstallationAssessment {
   id: string
   deploymentType: string
   cabinetType: string[]
+  cabinetTypeOther?: string
   intersections: number
   equipment: any
   auxiliary: any
@@ -48,6 +49,9 @@ interface InstallationRegistration {
   intersections: string
   estimatedDate: string
   cabinetType: string[]
+  cabinetTypeOther?: string
+  signalPhasingFiles?: string[]
+  signalTimingFiles?: string[]
   firstName: string
   lastName: string
   email: string
@@ -86,7 +90,9 @@ export default function AdminDashboard() {
       } else if (activeTab === 'registrations') {
         const res = await fetch('/api/installation-registration')
         const data = await res.json()
+        console.log('Install registrations response:', data)
         if (data.success) setRegistrations(data.data)
+        else console.error('Failed to load registrations:', data)
       }
     } catch (error) {
       console.error('Error loading data:', error)
