@@ -43,6 +43,7 @@ model InstallationAssessment {
   id              String   @id @default(cuid())
   deploymentType  String
   cabinetType     String[] // Array of selected cabinet types
+  cabinetTypeOther String?  // Custom cabinet type if "Other" is selected
   intersections   Int
   equipment       Json     // Store equipment quantities as JSON
   auxiliary       Json     // Store auxiliary equipment as JSON
@@ -59,6 +60,7 @@ model InstallationRegistration {
   intersections        String   @db.Text // Can be multiple, stored as text
   estimatedDate        DateTime
   cabinetType          String[] // Array of selected cabinet types
+  cabinetTypeOther     String?  // Custom cabinet type if "Other" is selected
   signalPhasingFiles   String[] // File paths/URLs
   signalTimingFiles    String[] // File paths/URLs
   firstName            String
