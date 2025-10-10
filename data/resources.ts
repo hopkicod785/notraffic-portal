@@ -249,15 +249,21 @@ export const resources: ResourceItem[] = [
   },
 
   // TRAINING VIDEOS
-  // NOTE: Video files are not in Git due to size. Update with YouTube/Vimeo embed URLs or cloud storage URLs
+  // TO ADD YOUTUBE URLS: 
+  // 1. Upload video to YouTube
+  // 2. Click "Share" → "Embed" 
+  // 3. Copy the URL from src="..." (should be: https://www.youtube.com/embed/VIDEO_ID)
+  // 4. Uncomment the externalUrl line and paste your URL
+  // 5. Comment out or remove the filePath line
+  
   {
     id: 40,
     title: 'AI Mobility Platform Overview',
     description: 'Introduction to the NoTraffic AI Mobility Platform',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/AI_Mobility_Platform.mp4', // Local only - works in dev
-    // externalUrl: 'https://www.youtube.com/embed/YOUR_VIDEO_ID', // Uncomment and add your YouTube URL for production
+    // filePath: '/resources/videos/AI_Mobility_Platform.mp4', // Local only
+    externalUrl: '', // ADD YOUTUBE EMBED URL HERE: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -269,7 +275,7 @@ export const resources: ResourceItem[] = [
     description: 'Demonstration of advanced far-zone detection capabilities',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Advanced Detection_Far_Zone.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -281,7 +287,7 @@ export const resources: ResourceItem[] = [
     description: 'Detection capabilities for pedestrians, bikes, and scooters',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Pedestrian and Micromobility.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -293,7 +299,7 @@ export const resources: ResourceItem[] = [
     description: 'Heavy vehicle and truck detection demonstration',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Truck Detection.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -305,7 +311,7 @@ export const resources: ResourceItem[] = [
     description: 'System performance during heavy rain conditions',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Heavy Rain.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -317,7 +323,7 @@ export const resources: ResourceItem[] = [
     description: 'System performance in snow conditions',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Snow.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -329,7 +335,7 @@ export const resources: ResourceItem[] = [
     description: 'Mixed weather condition performance',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Snow and Rain.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -341,7 +347,7 @@ export const resources: ResourceItem[] = [
     description: 'System visibility and performance in foggy conditions',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Fog.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -353,7 +359,7 @@ export const resources: ResourceItem[] = [
     description: 'Performance during challenging sun glare conditions',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Sun Glare.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -365,7 +371,7 @@ export const resources: ResourceItem[] = [
     description: 'Demonstration of front panel access and controls',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Front Panel Access Demo.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -377,7 +383,7 @@ export const resources: ResourceItem[] = [
     description: 'Real-world traffic optimization case study',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/Optimization Case Study_Subs.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -389,7 +395,7 @@ export const resources: ResourceItem[] = [
     description: 'Overview of Vehicle-to-Everything (V2X) technology challenges',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/V2X Current Challenges.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
@@ -401,7 +407,7 @@ export const resources: ResourceItem[] = [
     description: 'Introduction to virtual transit signal priority technology',
     category: 'videos',
     type: 'Video',
-    filePath: '/resources/videos/vTSP.mp4',
+    externalUrl: '', // ADD YOUTUBE URL: https://www.youtube.com/embed/YOUR_VIDEO_ID
     size: 'N/A',
     pages: null,
     version: '2024',
